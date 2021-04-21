@@ -1,4 +1,4 @@
-﻿using MyGame.Domain;
+﻿using MyGame;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,59 +18,33 @@ namespace MyGame
         public Form1()
         {
             InitializeComponent();
-            Initialization();
+            InitializeEntities();
 
             DoubleBuffered = true;
 
+            Paint += (sender, args) =>
+            {
+                args.Graphics.DrawImage(Player.CurrentSprite, Player.X, Player.Y);
+            };
+
             var timer = new Timer();
             var currentTick = 0;
+            var maxTick = 4;
             timer.Interval = 50;
             timer.Tick += (sender, args) =>
             {
                 if (Player.IsMoving)
                     Player.Move();
                 Invalidate();
-                currentTick = (currentTick + 1) % 10;
+                currentTick = (currentTick + 1) % maxTick;
             };
-            timer.Start();
-
-            Paint += (sender, args) =>
-            {
-                var graphics = args.Graphics;
-                graphics.DrawImage(Player.CurrentSprite, Player.X, Player.Y);
-            };
+            timer.Start();            
 
             KeyDown += (sender, args) =>
             {
                 var speed = 10;
                 Player.IsMoving = true;
-                switch (args.KeyCode)
-                {
-                    case Keys.W:
-                        Player.DirectionY = -speed;
-                        Player.CurrentSprite = currentTick < 5
-                        ? Resource1.DoomGuyGoingUpR
-                        : Resource1.DoomGuyGoingUpL;
-                        break;
-                    case Keys.S:
-                        Player.DirectionY = speed;
-                        Player.CurrentSprite = currentTick < 5
-                        ? Resource1.DoomGuyGoingDownR
-                        : Resource1.DoomGuyGoingDownL;
-                        break;
-                    case Keys.A:
-                        Player.DirectionX = -speed;
-                        Player.CurrentSprite = currentTick < 5
-                        ? Resource1.DoomGuyRunsToLeftR
-                        : Resource1.DoomGuyRunsToLeftL;
-                        break;
-                    case Keys.D:
-                        Player.DirectionX = speed;
-                        Player.CurrentSprite = currentTick < 5
-                        ? Resource1.DoomGuyRunsToRightR
-                        : Resource1.DoomGuyRunsToRightL;
-                        break;
-                }                
+                MoveCharacter(args, currentTick, speed, maxTick);
             };
 
             KeyUp += (sender, args) =>
@@ -82,7 +56,39 @@ namespace MyGame
             };
         }
 
-        public void Initialization()
+        private void MoveCharacter(KeyEventArgs args, int currentTick, int speed, int maxTick)
+        {
+            var numberTicks = maxTick / 2;
+            switch (args.KeyCode)
+            {                
+                case Keys.W:
+                    Player.DirectionY = -speed;
+                    Player.CurrentSprite = currentTick < numberTicks
+                    ? Resource1.DoomGuyGoingUpR
+                    : Resource1.DoomGuyGoingUpL;
+                    break;
+                case Keys.S:
+                    Player.DirectionY = speed;
+                    Player.CurrentSprite = currentTick < numberTicks
+                    ? Resource1.DoomGuyGoingDownR
+                    : Resource1.DoomGuyGoingDownL;
+                    break;
+                case Keys.A:
+                    Player.DirectionX = -speed;
+                    Player.CurrentSprite = currentTick < numberTicks
+                    ? Resource1.DoomGuyRunsToLeftR
+                    : Resource1.DoomGuyRunsToLeftL;
+                    break;
+                case Keys.D:
+                    Player.DirectionX = speed;
+                    Player.CurrentSprite = currentTick < numberTicks
+                    ? Resource1.DoomGuyRunsToRightR
+                    : Resource1.DoomGuyRunsToRightL;
+                    break;
+            }
+        }
+
+        public void InitializeEntities()
         {
             Player = new Entity(730, 380, new Bitmap(Resource1.DoomGuyShootsDown));
         }
