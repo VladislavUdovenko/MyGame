@@ -63,6 +63,86 @@ namespace MyGame {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingDownL {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingDownL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingDownR {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingDownR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingLeftL {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingLeftL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingLeftR {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingLeftR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingRightL {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingRightL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingRightR {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingRightR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingUpL {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingUpL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlienGoingUpR {
+            get {
+                object obj = ResourceManager.GetObject("AlienGoingUpR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DoomGuyGoingDownL {
             get {
                 object obj = ResourceManager.GetObject("DoomGuyGoingDownL", resourceCulture);
@@ -83,6 +163,46 @@ namespace MyGame {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap DoomGuyGoingLeftL {
+            get {
+                object obj = ResourceManager.GetObject("DoomGuyGoingLeftL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DoomGuyGoingLeftR {
+            get {
+                object obj = ResourceManager.GetObject("DoomGuyGoingLeftR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DoomGuyGoingRightL {
+            get {
+                object obj = ResourceManager.GetObject("DoomGuyGoingRightL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DoomGuyGoingRightR {
+            get {
+                object obj = ResourceManager.GetObject("DoomGuyGoingRightR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DoomGuyGoingUpL {
             get {
                 object obj = ResourceManager.GetObject("DoomGuyGoingUpL", resourceCulture);
@@ -96,46 +216,6 @@ namespace MyGame {
         internal static System.Drawing.Bitmap DoomGuyGoingUpR {
             get {
                 object obj = ResourceManager.GetObject("DoomGuyGoingUpR", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DoomGuyRunsToLeftL {
-            get {
-                object obj = ResourceManager.GetObject("DoomGuyRunsToLeftL", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DoomGuyRunsToLeftR {
-            get {
-                object obj = ResourceManager.GetObject("DoomGuyRunsToLeftR", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DoomGuyRunsToRightL {
-            get {
-                object obj = ResourceManager.GetObject("DoomGuyRunsToRightL", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DoomGuyRunsToRightR {
-            get {
-                object obj = ResourceManager.GetObject("DoomGuyRunsToRightR", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Entity.cs" />
+    <Compile Include="Domain\Bullet.cs" />
+    <Compile Include="Domain\Alien.cs" />
+    <Compile Include="Domain\Player.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +135,30 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DoomGuyRunsToRightR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingDownL.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingDownR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingLeftL.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingLeftR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingRightL.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingRightR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingUpL.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingUpR.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
