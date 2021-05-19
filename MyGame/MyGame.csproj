@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Domain\Bullet.cs" />
     <Compile Include="Domain\Alien.cs" />
+    <Compile Include="Domain\Fuel.cs" />
     <Compile Include="Domain\Player.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -110,27 +111,6 @@
     <None Include="Resources\DoomGuyRunsToRightL.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\DoomGuyShootsDown.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DoomGuyShootsLeft .png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DoomGuyShootsRight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DoomGuyShootsUp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DoomGuyStand.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Марс.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\фонПикс.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\DoomGuyRunsToLeftL.png" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +139,75 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AlienGoingUpR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienBeatsBehind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienBeatsForward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienBeatsLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienBeatsRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienDied.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AlienGoingUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyDied.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyGoingDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyGoingLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyGoingRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyGoingUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyShootsDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyShootsLeft .png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyShootsRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyShootsUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DoomGuyStand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Марс.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\фонПикс.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Fuel1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Fuel.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

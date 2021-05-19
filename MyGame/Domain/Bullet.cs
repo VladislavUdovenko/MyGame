@@ -23,12 +23,13 @@ namespace MyGame
             CurrentSprite = new PictureBox();
             CurrentSprite.BackColor = Color.White;
             CurrentSprite.Size = new Size(4, 4);
+            CurrentSprite.Tag = "bullet";
         }
 
         public void MakeBullet(Form form)
         {
-            CurrentSprite.Left = X;
-            CurrentSprite.Top = Y;
+            //CurrentSprite.Left = X;
+            //CurrentSprite.Top = Y;
 
             form.Controls.Add(CurrentSprite);
 

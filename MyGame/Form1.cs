@@ -1,27 +1,30 @@
-﻿using MyGame;
-using MyGame.Domain;
+﻿using MyGame.Domain;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MyGame
 {
+    public enum Tags // new
+    {
+        Fuel,
+        Bullet,
+        Alien
+    }
+
     public partial class Form1 : Form
     {
         public Player Player { get; set; }
         public static Timer Timer { get; set; }
-        //public Random randNum = new Random(); // !
-        //List<PictureBox> AliensList = new List<PictureBox>(); // !
+        public Random Random { get; set; }
+        static List<Alien> AliensList { get; set; } // new
 
         public Form1()
         {
+            #region Инициализация иконок
             var healthLabel = new Label();
             healthLabel.Text = "Health:";
             healthLabel.Size = new Size(45, 20);
@@ -44,6 +47,7 @@ namespace MyGame
             Controls.Add(healthBar);
             Controls.Add(fuelLabel);
             Controls.Add(fuelBar);
+            #endregion
 
             DoubleBuffered = true;
 
@@ -52,14 +56,22 @@ namespace MyGame
                 args.Graphics.DrawImage(Player.CurrentSprite.Image, Player.X, Player.Y);
             };
 
-            Timer = new Timer();
+            MakeAliens(3); // new
+
             Timer.Interval = 30;
             Timer.Tick += (sender, args) =>
             {
-                //if (Player.Health < 1)
-                //    timer.Stop();
+                healthBar.Value = Player.Health;
+                if (Player.Health <= 0)
+                    Player.CurrentSprite.Image = Resource1.DoomGuyDied;
+
                 if (Player.IsMoving)
                     Player.Move();
+
+                SpawnFuel(); // new
+                DirectAliensToPlayer(); // new
+                CheckForIntersectionControls(fuelBar); // new
+
                 Invalidate();
             };
             Timer.Start();
@@ -86,6 +98,78 @@ namespace MyGame
             };            
         }
 
+        private void MakeAliens(int numberAliens) // new
+        {
+            for (int i = 0; i < numberAliens; i++)
+            {
+                var point = new Point(Random.Next(0, 900), Random.Next(0, 800));
+                AliensList.Add(new Alien(point, AliensList, this));
+            }
+        }
+
+        private void SpawnFuel() // new
+        {
+            if (Random.Next(0, 150) == 1)
+                new Fuel(this, Random);
+        }
+
+        private void DirectAliensToPlayer() // new
+        {
+            foreach (var alien in AliensList)
+                alien.GoToPlayer(Player);
+        }
+
+        public void CheckForIntersectionControls(ProgressBar fuelBar) // new
+        {
+            foreach (Control firstControl in this.Controls)
+            {
+                CheckIfTookFuel(fuelBar, firstControl);
+                foreach (Control secondControl in this.Controls)
+                {
+                    CheckIfAliensHaveBeenShot(firstControl, secondControl);
+                }
+            }
+        }
+
+        public void CheckIfTookFuel(ProgressBar fuelBar, Control control) // new
+        {
+            if (control is PictureBox && (string)control.Tag == "fuel"
+                && Player.CurrentSprite.Bounds.IntersectsWith(control.Bounds))
+            {
+                this.Controls.Remove(control);
+                control.Dispose();
+                fuelBar.Value += 10;
+            }
+        }
+
+        private void CheckIfAliensHaveBeenShot(Control firstControl, Control secondControl) // new
+        {
+            if ((string)secondControl.Tag == "bullet"
+                && (string)firstControl.Tag == "alien"
+                && firstControl.Bounds.IntersectsWith(secondControl.Bounds))
+            {
+                this.Controls.Remove(firstControl);
+                this.Controls.Remove(secondControl);
+                firstControl.Dispose();
+                secondControl.Dispose();
+
+                var alien = AliensList
+                    .Where(ali => ali.CurrentSprite == (PictureBox)firstControl)
+                    .Select(ali => ali)
+                    .ToArray();
+                AliensList.Remove(alien.First());
+                MakeAliens(1);                  
+            }
+        }
+
+        public void InitializeEntities()
+        {
+            Player = new Player(ClientSize.Width / 2, ClientSize.Height / 2, new Bitmap(Resource1.DoomGuyStand), new Size(200, 200));
+            Timer = new Timer();
+            Random = new Random();
+            AliensList = new List<Alien>(); //new
+        }
+        
         private void MoveOrStopPlayer(Keys keys, int speed, bool isMoving)
         {
             switch (keys)
@@ -93,22 +177,22 @@ namespace MyGame
                 case Keys.W:
                     Player.DirectionY = -speed;
                     Player.CurrentMovement[Player.DirectionMovement.Up] = isMoving;
-                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingUpR;
+                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingUp;
                     break;
                 case Keys.S:
                     Player.DirectionY = speed;
                     Player.CurrentMovement[Player.DirectionMovement.Down] = isMoving;
-                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingDownR;
+                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingDown;
                     break;
                 case Keys.A:
                     Player.DirectionX = -speed;
                     Player.CurrentMovement[Player.DirectionMovement.Left] = isMoving;
-                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingLeftR;
+                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingLeft;
                     break;
                 case Keys.D:
                     Player.DirectionX = speed;
                     Player.CurrentMovement[Player.DirectionMovement.Right] = isMoving;
-                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingRightL;
+                    Player.CurrentSprite.Image = Resource1.DoomGuyGoingRight;
                     break;
             }
         }
@@ -140,8 +224,9 @@ namespace MyGame
         {
             var shootBulet = new Bullet();
             shootBulet.Direction = direction;
-            shootBulet.X = Player.X + (Player.CurrentSprite.Width / 2);
-            shootBulet.Y = Player.Y + (Player.CurrentSprite.Height / 2);
+            shootBulet.CurrentSprite.Location
+                = new Point(Player.X + (Player.CurrentSprite.Width / 2),
+                Player.Y + (Player.CurrentSprite.Height / 2));
             shootBulet.MakeBullet(this);
         }
 
@@ -164,31 +249,80 @@ namespace MyGame
                 MoveOrStopPlayer(Keys.D, 10, true);
             else if (movement.First() == Player.DirectionMovement.Left)
                 MoveOrStopPlayer(Keys.A, 10, true);
-        }
-
-        //private void CreateAliens(int numberAliens)
-        //{
-        //    for (int i = 0; i < numberAliens; i++)
-        //    {
-        //        CreateAlien();
-        //    }
-        //}
-
-        //private void CreateAlien() // !
-        //{
-        //    var alien = new PictureBox();
-        //    alien.Image = Resource1.AlienGoingLeftL;
-        //    alien.Left = randNum.Next(0, 900);
-        //    alien.Top = randNum.Next(0, 800);
-        //    alien.SizeMode = PictureBoxSizeMode.AutoSize;
-        //    AliensList.Add(alien);
-        //    this.Controls.Add(alien);
-        //    Player.CurrentSprite.BringToFront();
-        //}
-
-        public void InitializeEntities()
-        {
-            Player = new Player(ClientSize.Width / 2, ClientSize.Height / 2, new Bitmap(Resource1.DoomGuyStand), new Size(200, 200));
-        }
+        }        
     }
 }
+
+#region мусор
+//public void CheckIfAliensHaveBeenShot() // del
+//{
+//    foreach (Control firstControl in this.Controls)
+//    {
+//        foreach (Control secondControl in this.Controls)
+//        {
+//            if ((string)secondControl.Tag == "bullet"
+//                && (string)firstControl.Tag == "alien"
+//                && firstControl.Bounds.IntersectsWith(secondControl.Bounds))
+//            {
+//                this.Controls.Remove(firstControl);
+//                this.Controls.Remove(secondControl);
+//                ((PictureBox)firstControl).Dispose();
+//                ((PictureBox)secondControl).Dispose();
+
+//                //var alien = AliensList
+//                //    .Where(ali => ali.CurrentSprite == (PictureBox)firstControl)
+//                //    .Select(ali => ali);
+//                // AliensList.Remove((Alien)alien);
+//                AliensList.Remove((PictureBox)firstControl);
+
+//                CreateAlien(); // !!!
+//            }
+//        }
+//    }
+//}
+
+//private void CreateAlien() // del
+//{
+//    var alien = new PictureBox();
+//    alien.Tag = "alien";
+//    alien.Image = Resource1.AlienGoingLeft;
+//    alien.Left = Random.Next(0, 900);
+//    alien.Top = Random.Next(0, 800);
+//    alien.SizeMode = PictureBoxSizeMode.AutoSize;
+//    AliensList.Add(alien);
+//    this.Controls.Add(alien);
+//    Player.CurrentSprite.BringToFront();
+//}
+
+//public void DirectAlienToPlayer() // del
+//{
+//    foreach (Control control in this.Controls)
+//    {
+//        if (control is PictureBox && (string)control.Tag == "alien")
+//        {
+//            var speed = 5;
+//            if (control.Top > Player.CurrentSprite.Top)
+//            {
+//                control.Top -= speed;
+//                ((PictureBox)control).Image = Resource1.AlienGoingUp;
+//            }
+//            if (control.Top < Player.CurrentSprite.Top)
+//            {
+//                control.Top += speed;
+//                ((PictureBox)control).Image = Resource1.AlienGoingDown;
+//            }
+//            if (control.Left > Player.CurrentSprite.Left)
+//            {
+//                control.Left -= speed;
+//                ((PictureBox)control).Image = Resource1.AlienGoingLeft;
+//            }
+//            if (control.Left < Player.CurrentSprite.Left)
+//            {
+//                control.Left += speed;
+//                ((PictureBox)control).Image = Resource1.AlienGoingRight;
+//            }
+
+//        }
+//    }
+//}
+#endregion

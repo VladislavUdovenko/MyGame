@@ -37,8 +37,10 @@ namespace MyGame
 
             CurrentSprite = new PictureBox();
             CurrentSprite.Image = sprite;
-            CurrentSprite.SizeMode = PictureBoxSizeMode.StretchImage;
-            CurrentSprite.Size = CurrentSprite.Image.Size;
+            //CurrentSprite.SizeMode = PictureBoxSizeMode.StretchImage;
+            CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
+            //CurrentSprite.Size = CurrentSprite.Image.Size;
+            CurrentSprite.Location = new Point(X, Y);
 
             CurrentMovement = new Dictionary<DirectionMovement, bool>();
             CurrentMovement[DirectionMovement.Up] = false;
@@ -55,6 +57,7 @@ namespace MyGame
                 X += DirectionX;
             if (Y + DirectionY < resolution.Height - 55 && Y + DirectionY > 20)
                 Y += DirectionY;
+            CurrentSprite.Location = new Point(X, Y);
         }
     }
 }
