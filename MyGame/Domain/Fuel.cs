@@ -19,8 +19,6 @@ namespace MyGame.Domain
             CurrentSprite = new PictureBox();
             CurrentSprite.Image = Resource1.Fuel;
             CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
-            CurrentSprite.Left = random.Next(10, form.ClientSize.Width - CurrentSprite.Width);
-            CurrentSprite.Top = random.Next(60, form.ClientSize.Height - CurrentSprite.Height);
             
             X = random.Next(10, form.ClientSize.Width - CurrentSprite.Width);
             Y = random.Next(60, form.ClientSize.Height - CurrentSprite.Height);

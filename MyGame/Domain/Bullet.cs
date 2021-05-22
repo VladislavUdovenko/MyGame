@@ -32,7 +32,7 @@ namespace MyGame
 
             Form1.Timer.Tick += (sender, args) =>
             {
-                var resolution = new Size(940, 700);
+                var resolution = Screen.PrimaryScreen.Bounds.Size;
                 if (Direction == Keys.Left)
                     CurrentSprite.Left -= Speed;
                 if (Direction == Keys.Right)

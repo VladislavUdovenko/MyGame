@@ -36,7 +36,7 @@ namespace MyGame
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::MyGame.Resource1.фонПикс;
-            this.ClientSize = new System.Drawing.Size(940, 700);
+            //this.ClientSize = new System.Drawing.Size(940, 700);
             this.Name = "Form1";
             this.Text = "Escape from an alien planet ";
             this.ResumeLayout(false);

@@ -24,22 +24,33 @@ namespace MyGame
         public int DirectionY { get; set; }
 
         public bool IsMoving { get; set; }
-        public int Health { get; set; }
+        public bool IsAlive { get; set; }
+        private int health;
+        public int Health
+        {
+            get => health;
+            set
+            {
+                if (value <= 0)
+                    health = 0;
+                else
+                    health = value;
+            }
+        }
 
         public PictureBox CurrentSprite { get; set; }
 
-        public Player(int x, int y, Image sprite, Size size)
+        public Player()
         {
-            X = x;
-            Y = y;
+            var resolution = Screen.PrimaryScreen.Bounds.Size;
+            X = resolution.Width / 2;
+            Y = resolution.Height / 2;
 
-            Health = 100;
+            health = 100;
 
             CurrentSprite = new PictureBox();
-            CurrentSprite.Image = sprite;
-            //CurrentSprite.SizeMode = PictureBoxSizeMode.StretchImage;
+            CurrentSprite.Image = Resource1.DoomGuyStand;
             CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
-            //CurrentSprite.Size = CurrentSprite.Image.Size;
             CurrentSprite.Location = new Point(X, Y);
 
             CurrentMovement = new Dictionary<DirectionMovement, bool>();
@@ -51,11 +62,10 @@ namespace MyGame
 
         public void Move()
         {
-            // var resolution = Screen.PrimaryScreen.Bounds.Size;
-            var resolution = new Size(940, 700);
+            var resolution = Screen.PrimaryScreen.Bounds.Size;
             if (X + DirectionX < resolution.Width - 30 && X + DirectionX > 0)
                 X += DirectionX;
-            if (Y + DirectionY < resolution.Height - 55 && Y + DirectionY > 20)
+            if (Y + DirectionY < resolution.Height - 120 && Y + DirectionY > 20)
                 Y += DirectionY;
             CurrentSprite.Location = new Point(X, Y);
         }

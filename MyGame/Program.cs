@@ -17,10 +17,9 @@ namespace MyGame
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            // Application.Run(new Form1 { WindowState = FormWindowState.Maximized});
-            //var resolution = Screen.PrimaryScreen.Bounds.Size;
-            // Application.Run(new Form1 { ClientSize = new Size(resolution.Width, resolution.Height) });
-            Application.Run(new Form1 { ClientSize = new Size(940, 700) });
+            var resolution = Screen.PrimaryScreen.Bounds.Size;
+            Application.Run(new Form1 { ClientSize = new Size(resolution.Width, resolution.Height),
+                                        WindowState = FormWindowState.Maximized });
         }
     }
 }

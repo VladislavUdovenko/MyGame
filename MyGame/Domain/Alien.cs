@@ -14,23 +14,24 @@ namespace MyGame.Domain
         public int Y { get; set; }
         public int Health { get; set; }
         public PictureBox CurrentSprite { get; set; }
+        public bool AlienCanGo { get; set; }
 
-        public Alien(Point point)
+        public Alien(Random random)
         {
             Health = 3;
 
             CurrentSprite = new PictureBox();
             CurrentSprite.Image = Resource1.AlienGoingDown;
             CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
-
-            CurrentSprite.Left = point.X;
-            CurrentSprite.Top = point.Y;
-            CurrentSprite.Location = point;
+            CurrentSprite.Location = GetCoordinate(random);
+            AlienCanGo = true;
         }
 
         public void GoToPlayer(Player player)
         {
-            var speed = 4;
+            if (!AlienCanGo)
+                return;
+            var speed = 6;
             if (CurrentSprite.Top > player.CurrentSprite.Top)
             {
                 CurrentSprite.Top -= speed;
@@ -53,38 +54,27 @@ namespace MyGame.Domain
             }
         }
 
-        //public static Point GetCoordinate()
-        //{
-        //    var rnd = new Random();
-        //    var x = rnd.Next(0, 940);
-        //    var y = rnd.Next(0, 700);
-        //    return new Point(x, y);
-        //}
+        public static Point GetCoordinate(Random random)
+        {
+            var resolution = Screen.PrimaryScreen.Bounds.Size;
+            Point point;
+            if (random.Next(0, 2) == 0)
+            {
+                if (random.Next(0, 2) == 0)
+                    point = new Point(resolution.Width + 100, random.Next(-100, resolution.Height + 100)); // right wall
+                else
+                    point = new Point(-100, random.Next(-100, resolution.Height + 100)); // left wall
+            }
+            else
+            {
 
-        //public static Point GetCoordinate()
-        //{
-        //    var resolution = Screen.PrimaryScreen.Bounds.Size;
-        //    var rnd = new Random();
-        //    var point = new Point();
-        //    if (rnd.Next(0, 2) == 0)
-        //    {
-        //        rnd = new Random();
-        //        if (rnd.Next(0, 2) == 0)
-        //            point = new Point(resolution.Width, rnd.Next(0, resolution.Height));
-        //        else
-        //            point = new Point(0, rnd.Next(0, resolution.Height));
-        //    }
-        //    else
-        //    {
+                if (random.Next(0, 2) == 0)
+                    point = new Point(random.Next(-100, resolution.Width + 100), resolution.Height + 100); // lower wall
+                else
+                    point = new Point(random.Next(-100, resolution.Width + 100), -100); // upper wall
+            }
 
-        //        if (rnd.Next(0, 2) == 0)
-        //            point = new Point(rnd.Next(0, resolution.Width), resolution.Height);
-        //        else
-        //            point = new Point(rnd.Next(0, resolution.Width), 0);
-
-        //    }
-
-        //    return point;
-        //}
+            return point;
+        }
     }
 }

@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MyGame
+namespace MyGame // Фон найди, ракету сделай.
 {
     public partial class Form1 : Form
     {
         public Player Player { get; set; }
-        public static Timer Timer { get; set; }
+        public static System.Windows.Forms.Timer Timer { get; set; }
         public Random Random { get; set; }
-        static List<Alien> AliensList { get; set; } // new
-        static List<Fuel> FuelsList { get; set; } // new
+        static List<Alien> AliensList { get; set; }
+        static List<Fuel> FuelsList { get; set; }
 
         public Form1()
         {
@@ -36,12 +37,27 @@ namespace MyGame
             fuelBar.Size = new Size(180, 20);
             fuelBar.Value = 0;
 
+            var restartButton = new Button();
+            restartButton.Text = "Restart game";
+            restartButton.AutoSize = true;
+            restartButton.Click += (sender, args) => Application.Restart();
+
             InitializeComponent();
             InitializeEntities();
             Controls.Add(healthLabel);
             Controls.Add(healthBar);
             Controls.Add(fuelLabel);
             Controls.Add(fuelBar);
+
+            SizeChanged += (sender, args) =>
+            {
+                healthBar.Location = new Point(ClientSize.Width - healthBar.Size.Width, 0);
+                healthLabel.Location = new Point(healthBar.Location.X - healthLabel.Size.Width, 0);
+                fuelLabel.Location = new Point(0, 0);
+                fuelBar.Location = new Point(fuelLabel.Width, 0);
+                var resolution = Screen.PrimaryScreen.Bounds.Size;
+                restartButton.Location = new Point(resolution.Width / 2, resolution.Height / 2);
+            };
             #endregion
 
             DoubleBuffered = true;
@@ -55,37 +71,37 @@ namespace MyGame
                     args.Graphics.DrawImage(alien.CurrentSprite.Image, alien.CurrentSprite.Location);
             };
 
-            MakeAliens(3);
+            MakeAliens(10);
+            SpawnFuel();
 
-            Timer.Interval = 30;
+            Timer.Interval = 40;
             Timer.Tick += (sender, args) =>
             {
                 healthBar.Value = Player.Health;
                 if (Player.Health <= 0)
+                {
                     Player.CurrentSprite.Image = Resource1.DoomGuyDied;
+                    Controls.Add(restartButton);
+                    Timer.Stop();
+                }
+                    
 
                 if (Player.IsMoving)
                     Player.Move();
 
-                SpawnFuel(); // new
-                DirectAliensToPlayer(); // new
-                CheckIfTookFuel(fuelBar); // new
-                CheckIfAliensHaveBeenShot(); // new
+                
+                DirectAliensToPlayer();
+                CheckIfTookFuel(fuelBar);
+                CheckAliens();
 
                 Invalidate();
             };
             Timer.Start();
 
-            SizeChanged += (sender, args) =>
-            {
-                healthBar.Location = new Point(ClientSize.Width - healthBar.Size.Width, 0);
-                healthLabel.Location = new Point(healthBar.Location.X - healthLabel.Size.Width, 0);
-                fuelLabel.Location = new Point(0, 0);
-                fuelBar.Location = new Point(fuelLabel.Width, 0);
-            };
-
             KeyDown += (sender, args) =>
             {
+                if (Player.Health <= 0)
+                    return;
                 Player.IsMoving = true;
                 MoveOrStopPlayer(args.KeyCode, 10, true);
                 Shoot(args);
@@ -100,48 +116,55 @@ namespace MyGame
 
         public void InitializeEntities()
         {
-            Player = new Player(ClientSize.Width / 2, ClientSize.Height / 2, new Bitmap(Resource1.DoomGuyStand), new Size(200, 200));
-            Timer = new Timer();
+            Player = new Player();
+            Timer = new System.Windows.Forms.Timer();
             Random = new Random();
             AliensList = new List<Alien>();
-            FuelsList = new List<Fuel>(); // new
+            FuelsList = new List<Fuel>();
         }
 
-        private void MakeAliens(int numberAliens) // new
+        private void MakeAliens(int numberAliens)
         {
             for (int i = 0; i < numberAliens; i++)
             {
-                var point = new Point(Random.Next(0, 900), Random.Next(0, 800));
-                var alien = new Alien(point);
+                var alien = new Alien(Random);
                 AliensList.Add(alien);
             }
         }
 
-        private void SpawnFuel() // new
+        async void SpawnFuel()
         {
-            if (Random.Next(0, 100) == 1)
-            {
-                var fuel = new Fuel(this, Random);
-                FuelsList.Add(fuel);
-            }
-
+            await SpawnFuelInThread();
         }
 
-        private void DirectAliensToPlayer() // new
+        Task SpawnFuelInThread()
+        {
+            var task = Task.Run
+                (
+                    () =>
+                    {
+                        var randomTime = Random.Next(5000, 15000);
+                        Thread.Sleep(randomTime);
+                        lock (FuelsList)
+                        {
+                            FuelsList.Add(new Fuel(this, Random));
+                        }
+                        SpawnFuel();
+                    }
+                );
+            return task;
+        }
+
+        private void DirectAliensToPlayer()
         {
             foreach (var alien in AliensList)
                 alien.GoToPlayer(Player);
         }
-        async void CheckIfTookFuel(ProgressBar fuelBar) // BeginInvoke
+
+        async void CheckIfTookFuel(ProgressBar fuelBar)
         {
             var indexesToDelete = await CheckIfTookFuelInThread(fuelBar);
             await RemoveTakenFuelInThread(indexesToDelete);
-        }
-
-        async void CheckIfAliensHaveBeenShot() // new
-        {
-            foreach (var alien in AliensList)
-                await RegisterHitInThread(alien);
         }
 
         Task<List<int>> CheckIfTookFuelInThread(ProgressBar fuelBar)
@@ -184,7 +207,16 @@ namespace MyGame
             return task;
         }
 
-        Task RegisterHitInThread(Alien alien)
+        async void CheckAliens()
+        {
+            foreach (var alien in AliensList)
+            {
+                await CheckIfAliensWereShot(alien);
+                CheckIfAliensAttackingPlayer(alien);
+            }
+        }
+
+        Task CheckIfAliensWereShot(Alien alien)
         {
             var task = Task.Run
                 (
@@ -192,9 +224,7 @@ namespace MyGame
                     {
                         foreach (Control control in this.Controls)
                         {
-                            if ((string)control.Tag == "bullet"
-                                && alien.CurrentSprite.Bounds
-                                .IntersectsWith(control.Bounds))
+                            if ((string)control.Tag == "bullet" && alien.CurrentSprite.Bounds.IntersectsWith(control.Bounds))
                             {
                                 BeginInvoke(new Action(() =>
                                 {
@@ -207,17 +237,28 @@ namespace MyGame
                                 {
                                     BeginInvoke(new Action(() =>
                                     {
-                                        var point = new Point(Random.Next(0, 900), Random.Next(0, 800));
-                                        alien.CurrentSprite.Left = point.X;
-                                        alien.CurrentSprite.Top = point.Y;
+                                        alien.CurrentSprite.Location = Alien.GetCoordinate(Random);
                                         alien.Health = 3;
+                                        alien.AlienCanGo = false;
                                     }));
+                                    var randomTime = Random.Next(3000, 13000);
+                                    Thread.Sleep(randomTime);
+                                    BeginInvoke(new Action(() => { alien.AlienCanGo = true; }));
                                 }
                             }
                         }
                     }
                 );
             return task;
+        }
+
+        void CheckIfAliensAttackingPlayer(Alien alien)
+        {
+            if (alien.CurrentSprite.Bounds
+                .IntersectsWith(Player.CurrentSprite.Bounds))
+            {
+                Player.Health -= 2;
+            }
         }
 
         private void MoveOrStopPlayer(Keys keys, int speed, bool isMoving)
@@ -302,77 +343,3 @@ namespace MyGame
         }        
     }
 }
-
-#region мусор
-//public void CheckIfAliensHaveBeenShot() // del
-//{
-//    foreach (Control firstControl in this.Controls)
-//    {
-//        foreach (Control secondControl in this.Controls)
-//        {
-//            if ((string)secondControl.Tag == "bullet"
-//                && (string)firstControl.Tag == "alien"
-//                && firstControl.Bounds.IntersectsWith(secondControl.Bounds))
-//            {
-//                this.Controls.Remove(firstControl);
-//                this.Controls.Remove(secondControl);
-//                ((PictureBox)firstControl).Dispose();
-//                ((PictureBox)secondControl).Dispose();
-
-//                //var alien = AliensList
-//                //    .Where(ali => ali.CurrentSprite == (PictureBox)firstControl)
-//                //    .Select(ali => ali);
-//                // AliensList.Remove((Alien)alien);
-//                AliensList.Remove((PictureBox)firstControl);
-
-//                CreateAlien(); // !!!
-//            }
-//        }
-//    }
-//}
-
-//private void CreateAlien() // del
-//{
-//    var alien = new PictureBox();
-//    alien.Tag = "alien";
-//    alien.Image = Resource1.AlienGoingLeft;
-//    alien.Left = Random.Next(0, 900);
-//    alien.Top = Random.Next(0, 800);
-//    alien.SizeMode = PictureBoxSizeMode.AutoSize;
-//    AliensList.Add(alien);
-//    this.Controls.Add(alien);
-//    Player.CurrentSprite.BringToFront();
-//}
-
-//public void DirectAlienToPlayer() // del
-//{
-//    foreach (Control control in this.Controls)
-//    {
-//        if (control is PictureBox && (string)control.Tag == "alien")
-//        {
-//            var speed = 5;
-//            if (control.Top > Player.CurrentSprite.Top)
-//            {
-//                control.Top -= speed;
-//                ((PictureBox)control).Image = Resource1.AlienGoingUp;
-//            }
-//            if (control.Top < Player.CurrentSprite.Top)
-//            {
-//                control.Top += speed;
-//                ((PictureBox)control).Image = Resource1.AlienGoingDown;
-//            }
-//            if (control.Left > Player.CurrentSprite.Left)
-//            {
-//                control.Left -= speed;
-//                ((PictureBox)control).Image = Resource1.AlienGoingLeft;
-//            }
-//            if (control.Left < Player.CurrentSprite.Left)
-//            {
-//                control.Left += speed;
-//                ((PictureBox)control).Image = Resource1.AlienGoingRight;
-//            }
-
-//        }
-//    }
-//}
-#endregion
