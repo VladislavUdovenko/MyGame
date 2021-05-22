@@ -15,27 +15,22 @@ namespace MyGame.Domain
         public int Health { get; set; }
         public PictureBox CurrentSprite { get; set; }
 
-        public Alien(Point point, List<Alien> aliensList, Form form)
+        public Alien(Point point)
         {
+            Health = 3;
 
             CurrentSprite = new PictureBox();
+            CurrentSprite.Image = Resource1.AlienGoingDown;
+            CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
 
             CurrentSprite.Left = point.X;
             CurrentSprite.Top = point.Y;
-
-            CurrentSprite.Image = Resource1.AlienGoingDown;
-            CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
-            CurrentSprite.Tag = "alien";
-
-            Health = 3;
-
-            aliensList.Add(this);
-            form.Controls.Add(CurrentSprite);
+            CurrentSprite.Location = point;
         }
 
         public void GoToPlayer(Player player)
         {
-            var speed = 3;
+            var speed = 4;
             if (CurrentSprite.Top > player.CurrentSprite.Top)
             {
                 CurrentSprite.Top -= speed;

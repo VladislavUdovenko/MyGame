@@ -28,9 +28,6 @@ namespace MyGame
 
         public void MakeBullet(Form form)
         {
-            //CurrentSprite.Left = X;
-            //CurrentSprite.Top = Y;
-
             form.Controls.Add(CurrentSprite);
 
             Form1.Timer.Tick += (sender, args) =>

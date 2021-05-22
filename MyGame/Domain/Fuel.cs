@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,10 +21,10 @@ namespace MyGame.Domain
             CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
             CurrentSprite.Left = random.Next(10, form.ClientSize.Width - CurrentSprite.Width);
             CurrentSprite.Top = random.Next(60, form.ClientSize.Height - CurrentSprite.Height);
-            CurrentSprite.Tag = "fuel";
-            form.Controls.Add(CurrentSprite);
-
-            //CurrentSprite.BringToFront();
+            
+            X = random.Next(10, form.ClientSize.Width - CurrentSprite.Width);
+            Y = random.Next(60, form.ClientSize.Height - CurrentSprite.Height);
+            CurrentSprite.Location = new Point(X, Y);
         }
     }
 }
