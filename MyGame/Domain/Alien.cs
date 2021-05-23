@@ -10,20 +10,19 @@ namespace MyGame.Domain
 {
     public class Alien
     {
-        public int X { get; set; }
-        public int Y { get; set; }
         public int Health { get; set; }
         public PictureBox CurrentSprite { get; set; }
         public bool AlienCanGo { get; set; }
 
         public Alien(Random random)
         {
-            Health = 3;
+            Health = 2;
 
             CurrentSprite = new PictureBox();
             CurrentSprite.Image = Resource1.AlienGoingDown;
             CurrentSprite.SizeMode = PictureBoxSizeMode.AutoSize;
             CurrentSprite.Location = GetCoordinate(random);
+
             AlienCanGo = true;
         }
 
@@ -31,7 +30,7 @@ namespace MyGame.Domain
         {
             if (!AlienCanGo)
                 return;
-            var speed = 6;
+            var speed = 5;
             if (CurrentSprite.Top > player.CurrentSprite.Top)
             {
                 CurrentSprite.Top -= speed;

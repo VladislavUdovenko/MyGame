@@ -11,9 +11,6 @@ namespace MyGame
     class Bullet
     {
         public Keys Direction { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-
         private int Speed { get; set; }
         public PictureBox CurrentSprite { get; set; }
 

@@ -13,6 +13,7 @@ namespace MyGame // Фон найди, ракету сделай.
     public partial class Form1 : Form
     {
         public Player Player { get; set; }
+        public UFO UFO { get; set; }
         public static System.Windows.Forms.Timer Timer { get; set; }
         public Random Random { get; set; }
         static List<Alien> AliensList { get; set; }
@@ -42,6 +43,11 @@ namespace MyGame // Фон найди, ракету сделай.
             restartButton.AutoSize = true;
             restartButton.Click += (sender, args) => Application.Restart();
 
+            var victoryLabel = new Label();
+            victoryLabel.Text = "You WON!!!";
+            victoryLabel.Size = new Size(restartButton.Width, restartButton.Height);
+
+
             InitializeComponent();
             InitializeEntities();
             Controls.Add(healthLabel);
@@ -56,7 +62,8 @@ namespace MyGame // Фон найди, ракету сделай.
                 fuelLabel.Location = new Point(0, 0);
                 fuelBar.Location = new Point(fuelLabel.Width, 0);
                 var resolution = Screen.PrimaryScreen.Bounds.Size;
-                restartButton.Location = new Point(resolution.Width / 2, resolution.Height / 2);
+                victoryLabel.Location = new Point(resolution.Width / 2, resolution.Height / 2);
+                restartButton.Location = new Point(victoryLabel.Left, victoryLabel.Bottom);
             };
             #endregion
 
@@ -64,34 +71,34 @@ namespace MyGame // Фон найди, ракету сделай.
 
             Paint += (sender, args) =>
             {
-                args.Graphics.DrawImage(Player.CurrentSprite.Image, Player.X, Player.Y);
-                foreach (var fuel in FuelsList)
-                    args.Graphics.DrawImage(fuel.CurrentSprite.Image, fuel.CurrentSprite.Location);
+                if (!Player.InsideUFO)
+                {
+                    args.Graphics.DrawImage(Player.CurrentSprite.Image, Player.X, Player.Y);
+                    foreach (var fuel in FuelsList)
+                        args.Graphics.DrawImage(fuel.CurrentSprite.Image, fuel.CurrentSprite.Location);
+                }
+
                 foreach (var alien in AliensList)
                     args.Graphics.DrawImage(alien.CurrentSprite.Image, alien.CurrentSprite.Location);
+                
+                args.Graphics.DrawImage(UFO.CurrentSprite.Image, UFO.CurrentSprite.Location);
+                
             };
 
             MakeAliens(10);
             SpawnFuel();
 
-            Timer.Interval = 40;
+            Timer.Interval = 30;
             Timer.Tick += (sender, args) =>
             {
                 healthBar.Value = Player.Health;
-                if (Player.Health <= 0)
-                {
-                    Player.CurrentSprite.Image = Resource1.DoomGuyDied;
-                    Controls.Add(restartButton);
-                    Timer.Stop();
-                }
-                    
+                CheckIfPlayerIsAlive(restartButton);
 
-                if (Player.IsMoving)
-                    Player.Move();
+                CheckPlayerInsideUFO();
 
-                
-                DirectAliensToPlayer();
                 CheckIfTookFuel(fuelBar);
+                CheckIfUFOIsFueled(fuelBar, restartButton, victoryLabel);
+
                 CheckAliens();
 
                 Invalidate();
@@ -117,6 +124,7 @@ namespace MyGame // Фон найди, ракету сделай.
         public void InitializeEntities()
         {
             Player = new Player();
+            UFO = new UFO();
             Timer = new System.Windows.Forms.Timer();
             Random = new Random();
             AliensList = new List<Alien>();
@@ -143,7 +151,7 @@ namespace MyGame // Фон найди, ракету сделай.
                 (
                     () =>
                     {
-                        var randomTime = Random.Next(5000, 15000);
+                        var randomTime = Random.Next(6000, 15000);
                         Thread.Sleep(randomTime);
                         lock (FuelsList)
                         {
@@ -153,6 +161,26 @@ namespace MyGame // Фон найди, ракету сделай.
                     }
                 );
             return task;
+        }
+
+        private void CheckIfPlayerIsAlive(Button restartButton)
+        {
+            if (Player.Health <= 0)
+            {
+                Player.CurrentSprite.Image = Resource1.DoomGuyDied;
+                Controls.Add(restartButton);
+                Timer.Stop();
+            }
+        }
+
+        private void CheckPlayerInsideUFO()
+        {
+            if (!Player.InsideUFO)
+            {
+                if (Player.IsMoving)
+                    Player.Move(UFO);
+                DirectAliensToPlayer();
+            }
         }
 
         private void DirectAliensToPlayer()
@@ -179,7 +207,13 @@ namespace MyGame // Фон найди, ракету сделай.
                         {
                             if (fuel.CurrentSprite.Bounds.IntersectsWith(Player.CurrentSprite.Bounds))
                             {
-                                BeginInvoke(new Action(() => fuelBar.Value += 10));
+                                BeginInvoke(new Action(() => 
+                                {
+                                    if (fuelBar.Value + 15 > 100)
+                                        fuelBar.Value = 100;
+                                    else
+                                        fuelBar.Value += 15;
+                                } ));
                                 indexesToDelete.Add(FuelsList.IndexOf(fuel));
                             }
                         }
@@ -205,6 +239,23 @@ namespace MyGame // Фон найди, ракету сделай.
                     }
                 );
             return task;
+        }
+
+        private void CheckIfUFOIsFueled(ProgressBar fuelBar, Button restartButton, Label victoryLabel)
+        {
+            if (fuelBar.Value == 100)
+            {
+                UFO.CurrentSprite.Image = Resource1.UFOWithFuel;
+                UFO.IsFueled = true;
+                if (UFO.CurrentSprite.Bounds.Contains(Player.CurrentSprite.Location) || Player.InsideUFO)
+                {
+                    Player.InsideUFO = true;
+                    UFO.CurrentSprite.Image = Resource1.PlayerInsideUFO;
+                    UFO.FlyUp();
+                    Controls.Add(victoryLabel);
+                    Controls.Add(restartButton);
+                }
+            }
         }
 
         async void CheckAliens()
@@ -238,7 +289,7 @@ namespace MyGame // Фон найди, ракету сделай.
                                     BeginInvoke(new Action(() =>
                                     {
                                         alien.CurrentSprite.Location = Alien.GetCoordinate(Random);
-                                        alien.Health = 3;
+                                        alien.Health = 2;
                                         alien.AlienCanGo = false;
                                     }));
                                     var randomTime = Random.Next(3000, 13000);
@@ -254,7 +305,7 @@ namespace MyGame // Фон найди, ракету сделай.
 
         void CheckIfAliensAttackingPlayer(Alien alien)
         {
-            if (alien.CurrentSprite.Bounds
+            if (!Player.InsideUFO && alien.CurrentSprite.Bounds
                 .IntersectsWith(Player.CurrentSprite.Bounds))
             {
                 Player.Health -= 2;
@@ -315,9 +366,9 @@ namespace MyGame // Фон найди, ракету сделай.
         {
             var shootBulet = new Bullet();
             shootBulet.Direction = direction;
-            shootBulet.CurrentSprite.Location
+            shootBulet.CurrentSprite.Location 
                 = new Point(Player.X + (Player.CurrentSprite.Width / 2),
-                Player.Y + (Player.CurrentSprite.Height / 2));
+                            Player.Y + (Player.CurrentSprite.Height / 2));
             shootBulet.MakeBullet(this);
         }
 

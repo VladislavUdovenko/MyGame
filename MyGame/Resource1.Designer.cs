@@ -263,9 +263,29 @@ namespace MyGame {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Fuel1 {
+        internal static System.Drawing.Bitmap PlayerInsideUFO {
             get {
-                object obj = ResourceManager.GetObject("Fuel1", resourceCulture);
+                object obj = ResourceManager.GetObject("PlayerInsideUFO", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UFOWithFuel {
+            get {
+                object obj = ResourceManager.GetObject("UFOWithFuel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UFOWithoutFuel {
+            get {
+                object obj = ResourceManager.GetObject("UFOWithoutFuel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

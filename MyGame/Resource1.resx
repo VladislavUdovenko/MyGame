@@ -178,8 +178,14 @@
   <data name="Fuel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Fuel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Fuel1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Fuel1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PlayerInsideUFO" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\PlayerInsideUFO.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UFOWithFuel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UFOWithFuel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UFOWithoutFuel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UFOWithoutFuel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Марс" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Марс.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

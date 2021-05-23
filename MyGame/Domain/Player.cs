@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyGame.Domain;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace MyGame
         public int DirectionY { get; set; }
 
         public bool IsMoving { get; set; }
-        public bool IsAlive { get; set; }
+        public bool InsideUFO { get; set; }
         private int health;
         public int Health
         {
@@ -46,6 +47,7 @@ namespace MyGame
             X = resolution.Width / 2;
             Y = resolution.Height / 2;
 
+            InsideUFO = false;
             health = 100;
 
             CurrentSprite = new PictureBox();
@@ -60,12 +62,21 @@ namespace MyGame
             CurrentMovement[DirectionMovement.Left] = false;
         }
 
-        public void Move()
+        public void Move(UFO ufo)
         {
             var resolution = Screen.PrimaryScreen.Bounds.Size;
-            if (X + DirectionX < resolution.Width - 30 && X + DirectionX > 0)
+
+            var piboxX = CurrentSprite;
+            piboxX.Left += DirectionX;
+
+            var piboxY = CurrentSprite;            
+            piboxY.Top += DirectionY;
+
+            if (X + DirectionX < resolution.Width - 30 && X + DirectionX > 0
+                && (!piboxX.Bounds.IntersectsWith(ufo.CurrentSprite.Bounds) || ufo.IsFueled))
                 X += DirectionX;
-            if (Y + DirectionY < resolution.Height - 120 && Y + DirectionY > 20)
+            if (Y + DirectionY < resolution.Height - 120 && Y + DirectionY > 20
+                && (!piboxY.Bounds.IntersectsWith(ufo.CurrentSprite.Bounds) || ufo.IsFueled))
                 Y += DirectionY;
             CurrentSprite.Location = new Point(X, Y);
         }
