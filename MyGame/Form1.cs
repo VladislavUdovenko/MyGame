@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MyGame // Фон найди, ракету сделай.
+namespace MyGame
 {
     public partial class Form1 : Form
     {
@@ -121,7 +121,7 @@ namespace MyGame // Фон найди, ракету сделай.
             };            
         }
 
-        public void InitializeEntities()
+        private void InitializeEntities()
         {
             Player = new Player();
             UFO = new UFO();
@@ -140,18 +140,18 @@ namespace MyGame // Фон найди, ракету сделай.
             }
         }
 
-        async void SpawnFuel()
+        private async void SpawnFuel()
         {
             await SpawnFuelInThread();
         }
 
-        Task SpawnFuelInThread()
+        private Task SpawnFuelInThread()
         {
             var task = Task.Run
                 (
                     () =>
                     {
-                        var randomTime = Random.Next(6000, 15000);
+                        var randomTime = Random.Next(5000, 13000);
                         Thread.Sleep(randomTime);
                         lock (FuelsList)
                         {
@@ -189,13 +189,13 @@ namespace MyGame // Фон найди, ракету сделай.
                 alien.GoToPlayer(Player);
         }
 
-        async void CheckIfTookFuel(ProgressBar fuelBar)
+        private async void CheckIfTookFuel(ProgressBar fuelBar)
         {
             var indexesToDelete = await CheckIfTookFuelInThread(fuelBar);
             await RemoveTakenFuelInThread(indexesToDelete);
         }
 
-        Task<List<int>> CheckIfTookFuelInThread(ProgressBar fuelBar)
+        private Task<List<int>> CheckIfTookFuelInThread(ProgressBar fuelBar)
         {
             var task = Task.Run
                 (
@@ -223,7 +223,7 @@ namespace MyGame // Фон найди, ракету сделай.
             return task;
         }
 
-        Task RemoveTakenFuelInThread(List<int> indexesToDelete)
+        private Task RemoveTakenFuelInThread(List<int> indexesToDelete)
         {
             var task = Task.Run
                 (
@@ -258,7 +258,7 @@ namespace MyGame // Фон найди, ракету сделай.
             }
         }
 
-        async void CheckAliens()
+        private async void CheckAliens()
         {
             foreach (var alien in AliensList)
             {
@@ -267,7 +267,7 @@ namespace MyGame // Фон найди, ракету сделай.
             }
         }
 
-        Task CheckIfAliensWereShot(Alien alien)
+        private Task CheckIfAliensWereShot(Alien alien)
         {
             var task = Task.Run
                 (
@@ -303,7 +303,7 @@ namespace MyGame // Фон найди, ракету сделай.
             return task;
         }
 
-        void CheckIfAliensAttackingPlayer(Alien alien)
+        private void CheckIfAliensAttackingPlayer(Alien alien)
         {
             if (!Player.InsideUFO && alien.CurrentSprite.Bounds
                 .IntersectsWith(Player.CurrentSprite.Bounds))
